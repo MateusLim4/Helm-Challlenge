@@ -1,0 +1,43 @@
+# Example custom values file for myapp
+# Use: helm install myapp-test myapp -f examples/custom-values.yaml
+
+# Override replica count
+replicaCount: 2
+
+# Use a different image
+image:
+  repository: nginx
+  pullPolicy: Always
+  tag: "1.24-alpine"
+
+# Enable ingress
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: myapp.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: myapp-tls
+      hosts:
+        - myapp.example.com
+
+# Set resource limits
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Enable autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70

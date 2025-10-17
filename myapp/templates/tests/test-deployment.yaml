@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "myapp.fullname" . }}-test-deployment"
+  labels:
+    {{- include "myapp.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: test
+      image: bitnami/kubectl:latest
+      command: ['sh', '-c']
+      args:
+        - |
+          echo "Checking if deployment exists..."
+          kubectl get deployment {{ include "myapp.fullname" . }} -n {{ .Release.Namespace }}
+          echo "Deployment check completed successfully"
+  restartPolicy: Never
+  serviceAccountName: {{ include "myapp.serviceAccountName" . }}
